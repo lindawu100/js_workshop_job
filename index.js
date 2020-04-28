@@ -7,6 +7,7 @@ navbtn.addEventListener("click", function(){
 })
 
 let search = document.querySelector('.button');
+let job_res
 search.addEventListener("click", function(e) {
     e.preventDefault()
     let description = document.getElementById('description').value;
@@ -14,16 +15,47 @@ search.addEventListener("click", function(e) {
     let full_time = document.getElementById('full_time').checked;
     
     let search_url = `https://still-spire-37210.herokuapp.com/positions.json?description=${description}&location=${locate}&full_time=${full_time}`;
+    // let search_url = "https://still-spire-37210.herokuapp.com/positions.json?description="+ description + "&location=" + locate + "&full_time=" + full_time
     console.log(search_url)
+
     fetch(search_url)
     .then(res => {
         return res.json();
         // console.log(res.json());
     })
     .then(function(json) {
-        console.log(json)
+        // console.log(json)
+        let result = json.map(toPostHtml).join('')
+        // console.log(result)
+        document.getElementById("column").innerHTML = result
     })
 })
+
+  
+
+function toPostHtml(jsn) {
+    return `
+    <table class="table is-fullwidth positionlist is-loading">
+        <tbody id="job-pannel">
+            <tr>
+            <td>
+                <h4><a href="https://jobs.github.com/positions/${jsn.id}">${jsn.title}</a></h4>
+                <p class="source">
+                <a class="company" href="https://jobs.github.com/companies/${jsn.company_url}">${jsn.company}</a>
+                –
+                <strong class="fulltime">${jsn.type}</strong>
+                </p>
+            </td>
+            <td class="meta">
+                <span class="location">${jsn.location}</span>
+            </td>
+            </tr>
+        </tbody>
+    </table>
+    `
+}
+
+
 
 
 // let url = new URL('https://jobs.github.com/positions?.json');
